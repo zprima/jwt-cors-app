@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "axios": "^0.18.0",
+    "eslint": "^5.12.1",
+    "next": "^7.0.2",
+    "react": "^16.7.0",
+    "react-cookie": "^3.0.8",
+    "react-dom": "^16.7.0",
+    "universal-cookie": "^3.0.7"
+  },
+  "scripts": {
+    "start": "next"
+  }
+}
