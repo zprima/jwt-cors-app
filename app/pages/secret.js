@@ -1,72 +1,48 @@
 import React from 'react';
-import Link from 'next/link';
 import axios from 'axios';
-import { getToken } from '../utils/auth';
-import Router from 'next/router'
+import { Cookies } from 'react-cookie';
+import { handleAuthSSR } from '../utils/auth';
+
+const serverUrl = 'http://localhost:3001';
+
+// set up cookies
+const cookies = new Cookies();
 
 class Secret extends React.Component {
 
-  onCheckToken = (e) => {
-    const x = getToken()
-    console.log(x)
-  }
-
   onPingCall = async (e) => {
-    console.log("ping call")
-    const x = getToken()
-    console.log(x)
-    const res = await axios({
-      method: 'get', url: 'http://localhost:3001/api/ping',
-      headers: {
-        'Authorization': x,
-        'content-type': 'application/json'
-      }
-    })
-    console.log(res.data)
+    const token = cookies.get('token')
+
+    try {
+      const res = await axios.get(serverUrl + '/api/ping', { headers: { 'Authorization': token } });
+      console.log(res.data.msg);
+    } catch (err) {
+      console.log(err.response.data.msg);
+    }
   }
 
   render() {
     return (
       <div>
-        <h1>Secret page</h1>
-        <Link href="/index">Home page</Link>
+        <h2>Secret page</h2>
+        <p>Only accessible via a valid JWT</p>
         <br></br>
-        <span onClick={(e) => this.onCheckToken(e)}>Click and check console for token value</span>
-        <br></br>
-        <span onClick={(e) => this.onPingCall(e)}>Ping Call</span>
+        <button onClick={(e) => this.onPingCall(e)}>Ping Call</button>
+        <p>Check console for response</p>
       </div>
     );
   }
 }
 
+// Server-Side Rendering
 Secret.getInitialProps = async (ctx) => {
+  // Must validate JWT
+  // If the JWT is invalid it must redirect
+  // back to the main page. You can do that
+  // with Router from 'next/router (TODO)
+  await handleAuthSSR(ctx);
 
-  let x = undefined;
-  if (ctx.req) {
-    x = ctx.req.headers.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-  } else {
-    x = getToken()
-  }
-  console.log("secret initial props token: ", x);
-
-  // const redirectOnError = () => {
-  //   if (process.browser) {
-  //     Router.push('/login')
-  //   } else {
-  //     ctx.res.writeHead(301, { Location: '/' })
-  //   }
-  // }
-
-  console.log("gpi", x)
-  const response = await axios({
-    method: 'get', url: 'http://localhost:3001/api/token/ping',
-    headers: {
-      'Authorization': x,
-      'content-type': 'application/json'
-    }
-  })
-  console.log(response)
-
+  // Must return an object
   return {}
 }
 

@@ -1,48 +1,44 @@
 import React from 'react';
 import Link from 'next/link.js';
 import axios from 'axios';
-import Router from 'next/router';
 import { Cookies } from 'react-cookie';
+import TokenStatus from '../components/token_status';
+
+const serverUrl = 'http://localhost:3001';
+
+// set up cookies
 const cookies = new Cookies();
-import { getToken } from '../utils/auth';
-
-// const axios = require('axios');
-
-function LoginStatus() {
-  const token = getToken();
-
-  return (
-    <div>Token: {token}</div>
-  )
-}
-
 class Index extends React.Component {
 
-  handleLoginClick = async (e) => {
-    e.preventDefault();
-
-    const response = await axios.get('http://localhost:3001/api/login')
-
-    const token = response.data.token;
-    cookies.set('token', token)
-    // Router.push('/secret')
+  constructor(props) {
+    super(props);
+    this.state = {
+      token: cookies.get('token') || null
+    }
   }
 
-  loginStatus = () => {
-    const token = "no token"
-    return <div>Token: {token}</div>
+  onLoginClick = async () => {
+    console.log("Login called");
+    const response = await axios.get(serverUrl + '/api/login')
+    const token = response.data.token;
+    cookies.set('token', token);
+    this.setState({
+      token: token
+    })
   }
 
   render() {
     return (
       <div>
-        <h1>Home page</h1>
-        <Link href="/secret"><a>Go to secret page</a></Link>
+        <h2>Main page</h2>
         <br></br>
+        <button onClick={() => this.onLoginClick()}>Get Token</button>
         <br></br>
-        <a href="" onClick={(e) => this.handleLoginClick(e)}>Login</a>
+        <TokenStatus token={this.state.token} />
         <br></br>
-        <LoginStatus />
+        <Link href="/secret">
+          <a>Secret page</a>
+        </Link>
       </div >
     )
   }
