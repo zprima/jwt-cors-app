@@ -27,7 +27,7 @@ export async function handleAuthSSR(ctx) {
     // in case of error
     console.log(err.response.data.msg);
     console.log("redirecting back to main page");
-    // redirect to login (TODO)
+    // redirect to login
     if (ctx.res) {
       ctx.res.writeHead(302, {
         Location: '/'
