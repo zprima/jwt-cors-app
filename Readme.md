@@ -4,5 +4,7 @@ JWT example app
 - express
 
 # App
-- next + react
+- next + react, testing SSR
 
+# WWW
+- next + react just to call api, nothing special
