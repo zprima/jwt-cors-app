@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link.js';
 import axios from 'axios';
 import { Cookies } from 'react-cookie';
-import TokenStatus from '../components/token_status';
 
 const serverUrl = 'http://localhost:3001';
 
@@ -34,7 +33,7 @@ class Index extends React.Component {
         <br></br>
         <button onClick={() => this.onLoginClick()}>Get Token</button>
         <br></br>
-        <TokenStatus token={this.state.token} />
+        <p>Token: {this.state.token}</p>
         <br></br>
         <Link href="/secret">
           <a>Secret page</a>
